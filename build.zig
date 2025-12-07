@@ -3,8 +3,8 @@ const std = @import("std");
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
-    const day1 = b.addModule("aoc_2025", .{
-        .root_source_file = b.path("src/day1.zig"),
+    const day = b.addModule("aoc_2025", .{
+        .root_source_file = b.path("src/day2.zig"),
         .target = target,
     });
 
@@ -15,7 +15,7 @@ pub fn build(b: *std.Build) void {
             .target = target,
             .optimize = optimize,
             .imports = &.{
-                .{ .name = "aoc_2025", .module = day1 },
+                .{ .name = "aoc_2025", .module = day },
             },
         }),
     });

@@ -8,5 +8,5 @@ pub fn main() !void {
 
     // day 2
     try aoc_2025.day2p1();
-    // try aoc_2025.day1p2();
+    try aoc_2025.day2p2();
 }

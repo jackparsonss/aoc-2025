@@ -38,4 +38,45 @@ pub fn day3p1() !void {
     std.debug.print("Day 3, Part 1: {}\n", .{sum});
 }
 
-pub fn day3p2() !void {}
+pub fn day3p2() !void {
+    var file = try std.fs.cwd().openFile(path, .{});
+    defer file.close();
+
+    var buf: [32768]u8 = undefined;
+    const re = try file.read(&buf);
+    var buf_reader = std.io.fixedBufferStream(buf[0..re]);
+    var in_stream = buf_reader.reader();
+
+    var sum: u64 = 0;
+    while (try in_stream.readUntilDelimiterOrEof(&buf, '\n')) |line| {
+        const n = line.len;
+        const batteries_to_pick = 12;
+
+        var result: u64 = 0;
+        var start_pos: usize = 0;
+        var remaining: usize = batteries_to_pick;
+
+        while (remaining > 0) {
+            const end_pos = n - remaining;
+
+            var max_digit: u8 = line[start_pos];
+            var max_pos: usize = start_pos;
+
+            var pos = start_pos;
+            while (pos <= end_pos) : (pos += 1) {
+                if (line[pos] > max_digit) {
+                    max_digit = line[pos];
+                    max_pos = pos;
+                }
+            }
+
+            result = result * 10 + (max_digit - '0');
+            start_pos = max_pos + 1;
+            remaining -= 1;
+        }
+
+        sum += result;
+    }
+
+    std.debug.print("Day 3, Part 2: {}\n", .{sum});
+}

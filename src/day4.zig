@@ -75,4 +75,97 @@ pub fn day4p1() !void {
     std.debug.print("Day 4, Part 1: {}\n", .{total});
 }
 
-pub fn day4p2() !void {}
+pub fn day4p2() !void {
+    var file = try std.fs.cwd().openFile(path, .{});
+    defer file.close();
+
+    var buf: [32768]u8 = undefined;
+    const re = try file.read(&buf);
+    var buf_reader = std.io.fixedBufferStream(buf[0..re]);
+    var in_stream = buf_reader.reader();
+
+    var inei: usize = 0;
+    var data: [size][size]u8 = undefined;
+    while (try in_stream.readUntilDelimiterOrEof(&buf, '\n')) |ine| {
+        for (ine, 0..) |c, j| {
+            data[inei][j] = c;
+        }
+
+        inei += 1;
+    }
+
+    var removed: u32 = 0;
+    var changed: u32 = 1;
+
+    const Pair = struct {
+        i: usize,
+        j: usize,
+    };
+
+    var al: std.ArrayList(Pair) = .empty;
+    var b: [32768]u8 = undefined;
+    var a = std.heap.FixedBufferAllocator.init(&b);
+    const allocator = a.allocator();
+
+    while (changed != 0) {
+        var total: u32 = 0;
+        for (0..size) |i| {
+            for (0..size) |j| {
+                const c = data[i][j];
+                if (c != '@') {
+                    continue;
+                }
+
+                const li: i32 = @intCast(i);
+                const lj: i32 = @intCast(j);
+                var count: u32 = 0;
+                if (li - 1 >= 0 and data[@intCast(li - 1)][j] == '@') {
+                    count += 1;
+                }
+
+                if (li + 1 < size and data[@intCast(li + 1)][j] == '@') {
+                    count += 1;
+                }
+
+                if (lj - 1 >= 0 and data[i][@intCast(lj - 1)] == '@') {
+                    count += 1;
+                }
+
+                if (lj + 1 < size and data[i][@intCast(lj + 1)] == '@') {
+                    count += 1;
+                }
+
+                if (li - 1 >= 0 and lj - 1 >= 0 and data[@intCast(li - 1)][@intCast(lj - 1)] == '@') {
+                    count += 1;
+                }
+
+                if (li + 1 < size and lj - 1 >= 0 and data[@intCast(li + 1)][@intCast(lj - 1)] == '@') {
+                    count += 1;
+                }
+
+                if (li - 1 >= 0 and lj + 1 < size and data[@intCast(li - 1)][@intCast(lj + 1)] == '@') {
+                    count += 1;
+                }
+
+                if (li + 1 < size and lj + 1 < size and data[@intCast(li + 1)][@intCast(lj + 1)] == '@') {
+                    count += 1;
+                }
+
+                if (count < 4) {
+                    total += 1;
+                    al.append(allocator, Pair{ .i = i, .j = j }) catch unreachable;
+                }
+            }
+        }
+
+        while (al.items.len > 0) {
+            const p = al.pop().?;
+            data[p.i][p.j] = '.';
+        }
+
+        changed = total;
+        removed += total;
+    }
+
+    std.debug.print("Day 4, Part 2: {}\n", .{removed});
+}

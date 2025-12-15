@@ -4,7 +4,7 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
     const day = b.addModule("aoc_2025", .{
-        .root_source_file = b.path("src/day3.zig"),
+        .root_source_file = b.path("src/day4.zig"),
         .target = target,
     });
 

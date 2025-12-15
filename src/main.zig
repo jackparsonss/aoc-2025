@@ -15,6 +15,10 @@ pub fn main() !void {
     // try aoc_2025.day3p2();
 
     // day 4
-    try aoc_2025.day4p1();
-    try aoc_2025.day4p2();
+    // try aoc_2025.day4p1();
+    // try aoc_2025.day4p2();
+
+    // day 5
+    try aoc_2025.day5p1();
+    try aoc_2025.day5p2();
 }
